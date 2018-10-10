@@ -1,0 +1,17 @@
+<div class="panel panel-default"> <!--面板 默认样式-->
+    <a href="#" class="list-group-item active"><!--列表组合的项 激活状态-->
+        站内搜索
+    </a>
+    <div class="list-group-item"><!--列表组合的项-->
+        <form class="bs-example bs-example-form" role="search" action="../search/" method="get"> <!--搜索表单-->
+            <div class="input-group"> <!--输入框组合-->
+                <input type="text" class="form-control" name="key" value="{{ key }}">  <!--输入框 默认值来自key变量-->
+                <span class="input-group-btn"> <!--输入框组合的按钮-->
+                  <button class="btn btn-default" type="submit">  <!--按钮默认样式 类型为表单提交按钮-->
+                            <span class="glyphicon glyphicon-search"></span><!--按钮中的字体图标-->
+                  </button>
+               </span>
+            </div>
+        </form>
+    </div>
+</div>

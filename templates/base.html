@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}页面标题{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <script src="{% static '/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <style type="text/css">
+    body {
+        padding-top: 70px;
+        padding-bottom: 50px;
+    }
+    html {
+        position: relative;
+        min-height: 100%;
+        }
+
+    footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        }
+
+    .copyright {
+        background: #111;
+        font-size: 13px;
+        text-align: center;
+        color: #555;
+        padding-top: 14px;
+        padding-bottom: 14px;
+        border-top: 3px solid #337ab7;
+    }
+    </style>
+</head>
+<body>
+{% include 'nav.html' %}
+<!-- 顶部导航 -->
+<div class="container"> <!-- 容器 -->
+    <div class="row clearfix"><!-- 容器中的行 -->
+        <div class="col-md-9 column"><!-- 行中的列：col-md-9表示此列宽度为页面主体宽度的9/12。 -->
+            <!--主要内容-->
+            {% block content %}主要内容{% endblock %}
+        </div>
+        <div class="col-md-3 column hidden-xs hidden-sm">
+            <!-- 行中的列：col-md-3表示此列宽度为页面主体宽度的3/12；hidden-xs和hidden-sm表示在小屏幕和超小屏幕设备中打开页面时隐藏此列-->
+            <!--侧边栏-->
+            {% include 'sidebar.html' %}
+        </div>
+    </div>
+</div>
+<footer>
+    <!--底部内容-->
+    {% include 'bottom.html' %}
+</footer>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}搜索结果{% endblock %}
+{% block content %}
+    <h4>以下是【{{ key }}】的查询结果</h4>
+    {% for article in object_list %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <a href="{% url 'detail' article.id %}">{{ article.title }}</a>
+                </h3>
+            </div>
+            <div class="panel-body">
+                <p>作者：{{ article.author }} 日期：{{ article.pub_time }}</p>
+                <p>{{ article.content|truncatechars:200|striptags }}</p>
+                <a class="btn" href="{% url 'detail' article.id %}">进入阅读 »</a>
+            </div>
+        </div>
+    {% empty %}
+        <h4> 没有查询结果！</h4>
+    {% endfor %}
+        <!--分页条-->
+    {% include 'paginator.html' %}
+{% endblock %}

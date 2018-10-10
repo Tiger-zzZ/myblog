@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}{{ object.title }}{% endblock %} <!--定义文章标题内容-->
+{% block content %}
+<script>
+    function reply(comment_name, comment_id) {
+        $('#content').attr('placeholder', '回复' + comment_name + '的内容：'); // 设置内容输入框的提示
+        $('#reply').val(comment_id) //设置隐藏元素的值为评论目标的id
+    }
+</script>
+<script>
+    $(document).ready(function () {
+        $('#submit_comment').click(function () { // 定义回复按钮点击时调用的函数
+            $.ajaxSetup({ // 添加防止跨域攻击的代码
+                data: {csrfmiddlewaretoken: '{{ csrf_token }}'}
+            });
+            var reply = $('#reply').val(); // 将评论目标id存入变量
+            var name = $('#name').val(); // 将评论人昵称存入变量
+            var email = $('#email').val(); // 将评论人邮箱地址存入变量
+            var content = $('#content').val(); // 将评论内容存入变量
+            if (name && email && content) { // 如果所有内容都已填写
+                $.post('{% url 'comment' %}', { // 用post方法提交请求
+                    'article': {{ article.id }}, // 请求中包含的参数字典
+                    'reply': reply,
+                    'name': name,
+                    'email': email,
+                    'content': content
+                }, function (result) { // 回调函数获取返回结果
+                    if (result === '200') { // 如果返回评论成功编码
+                        $('#comment_message').css({color: "green"}).html('评论成功！'); // 设置提示元素的样式与文字
+                    } else {
+                        $('#comment_message').css({color: "red"}).html('评论失败！');
+                    }
+                });
+                $('#comment_message').removeAttr('hidden'); // 去除提示元素的隐藏属性将提示显示在页面
+                setTimeout(function () { // 设置超时后执行的函数
+                    location.reload() // 重载页面内容
+                }, 1000); // 设置超时时长
+            } else { // 如果不是所有内容都已填写
+                $('#comment_message').removeAttr('hidden').html('请检查填写的内容！').css({color: "red"});
+                // 去除提示元素的隐藏属性将提示显示在页面，同时设置提示的样式与文字
+            }
+        });
+    });
+</script>
+<div>
+    <h3>标签</h3>
+    {% for tag in object.tag.all %} <!--遍历所有标签-->
+        {{ tag }} <!--显示标签到页面-->
+        {% if not forloop.last %} <!--如果不是循环的最后一项-->
+            | <!--显示一条竖线-->
+        {% endif %}
+    {% endfor %}
+</div>
+<div>
+    <h3>{{ object.title }}</h3>
+    <p>作者：{{ object.author }} 日期：{{ object.pub_time }} 类别：<a
+            href="{% url 'category' article.category.id %}">{{ article.category }}</a></p>
+    {{ object.content | safe }} <!--过滤器safe能够让文章内容中的HTML标签生效-->
+</div>
+    <div>
+    <h3>评论</h3>
+    {% for comment in comment_list %} <!--遍历评论数据列表-->
+        {% if comment.reply == None %} <!--如果没有回复目标（即顶级评论）-->
+            {% if not forloop.first %} <!--如果不是循环遍历的第一项-->
+                </ul>
+            {% endif %}
+            <ul class="list-group"> <!--顶级评论-->
+            <li class="list-group-item active">{{ comment.name }}：{{ comment.content }} ({{ comment.publish }})
+                <a href="#publish" onclick="reply('{{ comment.name }}',{{ comment.id }})"
+                   style="color: white;align-self: right">[回复]</a>
+
+                                <!--onclick的属性中调用了一个js函数 函数的参数为评论人和评论id 此函数在之后实现-->
+            </li> <!--class的属性值“active”能够让列表项样式为蓝色-->
+        {% else %}
+            <li class="list-group-item"> <!--回复评论-->
+                {{ comment.name }} >>> {{ comment.reply.name }}：{{ comment.content }} ({{ comment.publish }})
+                <a href="#publish" onclick="reply('{{ comment.name }}',{{ comment.id }})">[回复]</a>
+                <!--“#publish”能够让页面滚动到发表评论的位置-->
+            </li>
+        {% endif %}
+    {% if forloop.last %} <!--如果是循环遍历的最后一项-->
+        </ul>
+    {% endif %}
+    {% empty %} <!--如果数据列表是空的-->
+        暂无评论！
+    {% endfor %}
+</div>
+    <div>
+    <h3 id="publish">发表评论</h3>
+    <input type="hidden" id="reply" name="reply" value="0"> <!--隐藏元素 用于记录回复的目标-->
+    <div class="input-group"> <!--class中调用Bootstrap文本框组的样式-->
+        <span class="input-group-addon glyphicon glyphicon-user"></span>{{ comment_form.name }}
+        <!--span标签的class属性中调用Bootstrap文本框组的样式以及文字图标-->
+        <!--span标签的后方通过表单字段生成页面元素-->
+    </div>
+    <div class="input-group" style="margin-top: 10px"> <!--样式的作用是设置和上方的元素间隔-->
+        <span class="input-group-addon glyphicon glyphicon-envelope"></span>{{ comment_form.email }}
+    </div>
+    <div class="input-group" style="margin-top: 10px">
+        <span class="input-group-addon glyphicon glyphicon-edit"></span>{{ comment_form.content }}
+    </div>
+    <button id="submit_comment" type="button" class="btn btn-default" style="margin-top: 10px"><span
+            class="glyphicon glyphicon-hand-up"></span> 回复
+    </button> <!--button标签的class属性中调用Bootstrap按钮样式并通过span标签添加了文字图标-->
+    <label id="comment_message" hidden style="margin-top: 10px;vertical-align: middle;color: green"></label>
+    <!--label标签用于显示评论的提示 默认隐藏 样式中定义了与上方元素的间距 与左侧按钮的垂直对齐方式 还有默认文字颜色-->
+</div>
+{% endblock %}

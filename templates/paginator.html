@@ -1,0 +1,19 @@
+<ul class="pagination">
+    {% if page_obj.has_previous %} <!--如果有前一页-->
+        <li><a href="/?page={{ page_obj.previous_page_number }}">&laquo;</a></li> <!--链接到前一页页码-->
+    {% else %}
+        <li class="disabled"><a>&laquo;</a></li> <!--否则禁用前一页按钮-->
+    {% endif %}
+    {% for page_number in paginator.page_range %} <!--遍历页码范围-->
+        {% if page_number != page_obj.number %} <!--如果页码与当前页页码不相同-->
+            <li><a href="/?page={{ page_number }}">{{ page_number }}</a></li> <!--生成页码并添加链接-->
+        {% else %}
+            <li class="active"><a>{{ page_number }}</a></li> <!--否则，呈现激活样式-->
+        {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}<!--如果有下一页-->
+        <li><a href="/?page={{ page_obj.next_page_number }}">&raquo;</a></li> <!--链接到下一页页码-->
+    {% else %}
+        <li class="disabled"><a>&raquo;</a></li> <!--否则禁用下一页按钮-->
+    {% endif %}
+</ul>
