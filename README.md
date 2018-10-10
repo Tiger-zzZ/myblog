@@ -17,7 +17,7 @@
 
 
 ## 运行
-python manage.py runserver 8000
+	python manage.py runserver 8000
 
 ### 创建数据库
 	数据库使用Django自带的sqlite。
